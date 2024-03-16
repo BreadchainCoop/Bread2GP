@@ -1,1 +1,1 @@
-## Bread2GPay
+## Bread2GnosisPay
