@@ -16,14 +16,6 @@ contract Bread2GnosisPay is OwnableUpgradeable {
     address public constant GBPE_TOKEN_ADDRESS = 0x5Cb9073902F2035222B9749F8fB0c9BFe5527108;
     address public constant BREAD_TOKEN_ADDRESS = 0xa555d5344f6FB6c65da19e403Cb4c1eC4a1a5Ee3;
     address public constant CURVE_POOL_ADDRESS = 0x32b0456100e4fEBcA554244B225706B1BEeeaEB1;
-    
-    IERC20 public gbpeToken = IERC20(GBPE_TOKEN_ADDRESS);
-    IERC20 public breadToken = IERC20(BREAD_TOKEN_ADDRESS);
-    IStableSwap3Pool public curvePool = IStableSwap3Pool(CURVE_POOL_ADDRESS);
-
-    error TransferFailed();
-    error ApprovalFailed();
-    event TransferSuccessful(address to, uint256 amount);
     function initialize() public initializer {
         __Ownable_init(msg.sender);
         IERC20(BREAD_TOKEN_ADDRESS).approve(CURVE_POOL_ADDRESS, type(uint256).max);
@@ -47,14 +39,6 @@ contract Bread2GnosisPay is OwnableUpgradeable {
         // Transfer GBPe tokens from this contract to the provided SAFE wallet
         IERC20(GBPE_TOKEN_ADDRESS).transfer(safeWallet, gbpeBalance);
 
-    }
-
-    // Computes min_dy with a specified slippage tolerance
-    function computeMinDy(int128 i, int128 j, uint256 dx, uint256 slippageToleranceInBasisPoints) external view returns (uint256) {
-        uint256 expected_dy = curvePool.get_dy(i, j, dx);
-        uint256 slippageTolerance = slippageToleranceInBasisPoints * 1e14; // Convert basis points to a proportion
-        uint256 min_dy = expected_dy * (1e18 - slippageTolerance) / 1e18;
-        return min_dy;
     }
 
 
