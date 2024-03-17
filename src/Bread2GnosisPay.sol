@@ -28,7 +28,7 @@ contract Bread2GnosisPay is OwnableUpgradeable {
 
     error TransferFailed();
     error ApprovalFailed();
-    event TransferSuccessful(string message, address to, uint256 amount);
+    event TransferSuccessful(address to, uint256 amount);
     function initialize() public initializer {
         __Ownable_init(msg.sender);
     }
@@ -51,7 +51,7 @@ contract Bread2GnosisPay is OwnableUpgradeable {
         // Transfer GBPe tokens from this contract to the provided SAFE wallet
         require(gbpeToken.transfer(safeWallet, gbpeBalance), "GBPe transfer failed");
 
-        emit TransferSuccessful(safeWallet, gbpeBalance);
+        emit TransferSuccessful(safeWallet, amount);
     }
 
     // Computes min_dy with a specified slippage tolerance
