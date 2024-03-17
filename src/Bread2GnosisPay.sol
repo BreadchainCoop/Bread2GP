@@ -36,7 +36,7 @@ contract Bread2GnosisPay is OwnableUpgradeable {
         // Get the swapped GBPe balance of this contract
         uint256 gbpeBalance = IERC20(GBPE_TOKEN_ADDRESS).balanceOf(address(this));
 
-        // Transfer GBPe tokens from this contract to the provided SAFE wallet
+        // Transfer GBPe tokens from this contract to the provided Gnosis Pay addresss
         IERC20(GBPE_TOKEN_ADDRESS).transfer(safeWallet, gbpeBalance);
 
     }
