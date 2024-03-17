@@ -27,6 +27,9 @@ contract Bread2GnosisPay is OwnableUpgradeable {
     error TransferFailed();
     error ApprovalFailed();
     event TransferSuccessful(string message, address to, uint256 amount);
+    function initialize() public initializer {
+        __Ownable_init(msg.sender);
+    }
 
     function swapAndTransfer(address safeWallet, uint256 amount, uint256 min_dy) external {
         // Transfer BREAD tokens from sender to this contract
