@@ -8,7 +8,8 @@ import {TransparentUpgradeableProxy} from "openzeppelin-contracts/contracts/prox
 contract Bread2GPayScript is Script {
     Bread2GnosisPay public bread2gnosispay;
 
-    function setUp() public {
+    function run() public {
+        vm.startBroadcast();
         Bread2GnosisPay bread2gnosispayimplementation = new Bread2GnosisPay();
         bread2gnosispay =  Bread2GnosisPay(
             address(
@@ -19,9 +20,7 @@ contract Bread2GPayScript is Script {
                 )
             )
         );
-    }
-
-    function run() public {
-        vm.broadcast();
+        bread2gnosispay.initialize();
+        vm.stopBroadcast();
     }
 }

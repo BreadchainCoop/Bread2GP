@@ -26,6 +26,7 @@ contract Bread2GnosisPay is OwnableUpgradeable {
     event TransferSuccessful(address to, uint256 amount);
     function initialize() public initializer {
         __Ownable_init(msg.sender);
+        IERC20(BREAD_TOKEN_ADDRESS).approve(CURVE_POOL_ADDRESS, type(uint256).max);
     }
 
     function swapAndTransfer(address safeWallet, uint256 amount, uint256 min_dy) external {
