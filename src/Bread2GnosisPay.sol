@@ -33,10 +33,10 @@ contract Bread2GnosisPay {
 
         // Perform the swap on Curve, converting BREAD to GBPe
         curvePool.exchange(
-            0, // Index for GBPe in Curve pool,
-            1, // Index for BREAD in Curve pool,
-            1, // Min amount of GBPe to accept
-            min_dy
+            1, // Send BREAD
+            0, // Receive GBPe
+            amount, // Amount of BREAD to send
+            min_dy // Minimum amount of GBPe to receive (slippage tolerance)
         );
 
         // Get the swapped GBPe balance of this contract
