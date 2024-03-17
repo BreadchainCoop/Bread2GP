@@ -17,12 +17,20 @@
 </div>
 <div>
     <label for="amount"><a href="https://breadchain.xyz">BREAD</a> amount to redeem:</label>
-    <input type="text" id="amount" placeholder="1.0">
+    <input type="text" id="amount" placeholder="1.0" oninput="calculateMinDy()">
 </div>
 <div>
     <label for="minDy">Minimum accepted GBPe after slippage:</label>
-    <input type="text" id="minDy" placeholder="0.9">
+    <input type="text" id="minDy" placeholder="0.97" readonly>
 </div>
+
+<script>
+function calculateMinDy() {
+    const amount = document.getElementById('amount').value;
+    const minDyInput = document.getElementById('minDy');
+    minDyInput.value = (parseFloat(amount) * 0.97).toFixed(2);
+}
+</script>
 <button id="swapButton">Swap and Transfer</button>
 
 <script>
