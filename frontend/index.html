@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bread2Gnosis Swap</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script>
+    <script src="ABI_Bread2GnosisPay.js"></script>
+    <script src="ABI_Bread.js"></script>
+</head>
+<body>
+
+<h2>Bread2Gnosis Token Swap</h2>
+
+<div>
+    <label for="amount">Amount (BREAD):</label>
+    <input type="text" id="amount" placeholder="1.0">
+</div>
+<div>
+    <label for="minDy">Minimum Received (GBPe):</label>
+    <input type="text" id="minDy" placeholder="0.9">
+</div>
+<button id="swapButton">Swap and Transfer</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof window.ethereum !== 'undefined') {
+        console.log('Found Web3 provider.');
+    } else {
+        console.log('Could not find Web3 provider.');
+        return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+
+    const contractAddress = "";
+    const breadTokenAddress = "0xa555d5344f6FB6c65da19e403Cb4c1eC4a1a5Ee3";
+    const contractABI = abiBread2GnosisPay;
+    const breadTokenABI = abiBread;
+
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    const breadToken = new ethers.Contract(breadTokenAddress, breadTokenABI, signer);
+
+    async function approveAndSwap(safeWallet, amount, min_dy) {
+        try {
+            await provider.send("eth_requestAccounts", []);
+            const amountInWei = ethers.utils.parseUnits(amount, 18);
+            const minDyInWei = ethers.utils.parseUnits(min_dy, 18);
+
+            console.log("Approving contract to spend BREAD...");
+            const approvalTx = await breadToken.approve(contractAddress, amountInWei);
+            await approvalTx.wait();
+
+            console.log("Swapping and transferring...");
+            const tx = await contract.swapAndTransfer(safeWallet, amountInWei, minDyInWei);
+            await tx.wait();
+            alert('Transaction successful:', tx.hash);
+        } catch (error) {
+            alert('Transaction failed:', error);
+        }
+    }
+
+    const swapButton = document.getElementById('swapButton');
+    swapButton.addEventListener('click', () => {
+        const amount = document.getElementById('amount').value;
+        const minDy = document.getElementById('minDy').value;
+        const safeWallet = "0xSafeWalletAddress"; // Set the recipient wallet address here
+        approveAndSwap(safeWallet, amount, minDy);
+    });
+});
+</script>
+
+</body>
+</html>
