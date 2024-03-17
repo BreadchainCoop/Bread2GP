@@ -31,9 +31,6 @@ contract Bread2GnosisPay {
         // Transfer BREAD tokens from sender to this contract
         require(breadToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
-        // Approve Curve pool to spend BREAD tokens
-        require(breadToken.approve(CURVE_POOL_ADDRESS, amount), "Approval failed");
-
         // Perform the swap on Curve, converting BREAD to GBPe
         curvePool.exchange(
             0, // Index for GBPe in Curve pool,
