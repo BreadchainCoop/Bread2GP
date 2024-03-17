@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
+import {OwnableUpgradeable} from "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
 interface IERC20 {
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
@@ -13,7 +14,7 @@ interface IStableSwap3Pool {
     function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) external;
 }
 
-contract Bread2GnosisPay {
+contract Bread2GnosisPay is OwnableUpgradeable {
 
     address private constant GBPE_TOKEN_ADDRESS = 0x5Cb9073902F2035222B9749F8fB0c9BFe5527108;
     address private constant BREAD_TOKEN_ADDRESS = 0xa555d5344f6FB6c65da19e403Cb4c1eC4a1a5Ee3;
