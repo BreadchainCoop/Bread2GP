@@ -12,6 +12,10 @@
 <h2>Bread2Gnosis Token Swap</h2>
 
 <div>
+    <label for="amount">SAFE Wallet:</label>
+    <input type="text" id="safeWallet" placeholder="0xSafeWalletAddress">
+</div>
+<div>
     <label for="amount">Amount (BREAD):</label>
     <input type="text" id="amount" placeholder="1.0">
 </div>
@@ -44,19 +48,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function approveAndSwap(safeWallet, amount, min_dy) {
         try {
             await provider.send("eth_requestAccounts", []);
-            const amountInWei = ethers.utils.parseUnits(amount, 18);
-            const minDyInWei = ethers.utils.parseUnits(min_dy, 18);
+            const amountInWei = ethers.utils.parseUnits(amount, 'ether');
+            const minDyInWei = ethers.utils.parseUnits(min_dy, 'ether');
 
-            console.log("Approving contract to spend BREAD...");
+            console.log("Requesting approval...");
             const approvalTx = await breadToken.approve(contractAddress, amountInWei);
+            console.log(`Approval transaction sent. Waiting for confirmation... Tx: ${approvalTx.hash}`);
             await approvalTx.wait();
+            console.log(`Approval confirmed. Tx: ${approvalTx.hash}`);
 
-            console.log("Swapping and transferring...");
+            console.log("Initiating swap and transfer...");
             const tx = await contract.swapAndTransfer(safeWallet, amountInWei, minDyInWei);
+            console.log(`Swap and transfer transaction sent. Waiting for confirmation... Tx: ${tx.hash}`);
             await tx.wait();
-            alert('Transaction successful:', tx.hash);
+            console.log(`Transaction successful. Tx: ${tx.hash}`);
         } catch (error) {
-            alert('Transaction failed:', error);
+            console.error(`Transaction failed: ${error.message}`);
         }
     }
 
@@ -64,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     swapButton.addEventListener('click', () => {
         const amount = document.getElementById('amount').value;
         const minDy = document.getElementById('minDy').value;
-        const safeWallet = "0xSafeWalletAddress"; // Set the recipient wallet address here
+        const safeWallet = document.getElementById('safeWallet').value;
         approveAndSwap(safeWallet, amount, minDy);
     });
 });
