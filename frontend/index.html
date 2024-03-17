@@ -12,15 +12,15 @@
 <h2>Bread2Gnosis Token Swap</h2>
 
 <div>
-    <label for="amount">SAFE Wallet:</label>
+    <label for="amount">Gnosis Pay address:</label>
     <input type="text" id="safeWallet" placeholder="0xSafeWalletAddress">
 </div>
 <div>
-    <label for="amount">Amount (BREAD):</label>
+    <label for="amount"><a href="https://breadchain.xyz">BREAD</a> amount to redeem:</label>
     <input type="text" id="amount" placeholder="1.0">
 </div>
 <div>
-    <label for="minDy">Minimum Received (GBPe):</label>
+    <label for="minDy">Minimum accepted GBPe after slippage:</label>
     <input type="text" id="minDy" placeholder="0.9">
 </div>
 <button id="swapButton">Swap and Transfer</button>
@@ -62,8 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`Swap and transfer transaction sent. Waiting for confirmation... Tx: ${tx.hash}`);
             await tx.wait();
             console.log(`Transaction successful. Tx: ${tx.hash}`);
+            alert("Swap successful!");
         } catch (error) {
             console.error(`Transaction failed: ${error.message}`);
+            alert("Transaction failed. Please check the browser console for more details.")
         }
     }
 
