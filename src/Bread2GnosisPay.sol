@@ -12,6 +12,8 @@ interface IERC20 {
 interface IStableSwap3Pool {
     // https://github.com/curvefi/curve-contract/blob/master/contracts/pools/3pool/StableSwap3Pool.vy#L431
     function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) external;
+    // https://github.com/curvefi/curve-contract/blob/master/contracts/pools/3pool/StableSwap3Pool.vy#L402
+    function get_dy(int128 i, int128 j, uint256 dx) external view returns (uint256);
 }
 
 contract Bread2GnosisPay is OwnableUpgradeable {
@@ -33,10 +35,7 @@ contract Bread2GnosisPay is OwnableUpgradeable {
 
     function swapAndTransfer(address safeWallet, uint256 amount, uint256 min_dy) external {
         // Transfer BREAD tokens from sender to this contract
-        require(breadToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
-
-        // Approve Curve pool to spend BREAD tokens
-        require(breadToken.approve(CURVE_POOL_ADDRESS, amount), "Approval failed");
+        require(breadToken.transferFrom(msg.sender, address(this), amount), "BREAD transfer failed");
 
         // Perform the swap on Curve, converting BREAD to GBPe
         curvePool.exchange(
@@ -51,6 +50,15 @@ contract Bread2GnosisPay is OwnableUpgradeable {
 
         // Transfer GBPe tokens from this contract to the provided SAFE wallet
         require(gbpeToken.transfer(safeWallet, gbpeBalance), "GBPe transfer failed");
-        emit TransferSuccessful("GBPe token transfer successful.", safeWallet, gbpeBalance);
+
+        emit TransferSuccessful(safeWallet, gbpeBalance);
+    }
+
+    // Computes min_dy with a specified slippage tolerance
+    function computeMinDy(int128 i, int128 j, uint256 dx, uint256 slippageToleranceInBasisPoints) external view returns (uint256) {
+        uint256 expected_dy = curvePool.get_dy(i, j, dx);
+        uint256 slippageTolerance = slippageToleranceInBasisPoints * 1e14; // Convert basis points to a proportion
+        uint256 min_dy = expected_dy * (1e18 - slippageTolerance) / 1e18;
+        return min_dy;
     }
 }
