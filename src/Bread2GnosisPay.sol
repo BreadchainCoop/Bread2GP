@@ -23,13 +23,11 @@ contract Bread2GnosisPay {
     IERC20 private breadToken = IERC20(BREAD_TOKEN_ADDRESS);
     IStableSwap3Pool private curvePool = IStableSwap3Pool(CURVE_POOL_ADDRESS);
 
-    error TransferFailed();
-    error ApprovalFailed();
-    event TransferSuccessful(string message, address to, uint256 amount);
+    event TransferSuccessful(address to, uint256 amount);
 
     function swapAndTransfer(address safeWallet, uint256 amount, uint256 min_dy) external {
         // Transfer BREAD tokens from sender to this contract
-        require(breadToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
+        require(breadToken.transferFrom(msg.sender, address(this), amount), "BREAD transfer failed");
 
         // Perform the swap on Curve, converting BREAD to GBPe
         curvePool.exchange(
@@ -44,6 +42,7 @@ contract Bread2GnosisPay {
 
         // Transfer GBPe tokens from this contract to the provided SAFE wallet
         require(gbpeToken.transfer(safeWallet, gbpeBalance), "GBPe transfer failed");
-        emit TransferSuccessful("GBPe token transfer successful.", safeWallet, gbpeBalance);
+
+        emit TransferSuccessful(safeWallet, gbpeBalance);
     }
 }
